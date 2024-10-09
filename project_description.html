@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project Description</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #555;
+        }
+        .main-button {
+            display: block;
+            width: 120px;
+            margin: 20px auto;
+            padding: 10px;
+            text-align: center;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .main-button:hover {
+            background-color: #0056b3;
+        }
+        .code-block {
+            background-color: #eee;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        a {
+            color: #007bff;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Main Page Button -->
+        <a href="index.html" class="main-button">Main Page</a>
+
+        <!-- Content -->
+        <h1>Prediktív Karbantartási Modell Fejlesztése</h1>
+
+        <p>A Hugging Face oldalán elérhető (<a href="https://huggingface.co/datasets/EddyGiusepe/Modified_dataset_for_predictive_maintenance">link</a>) dataset felhasználásával fejlesztettünk egy meghibásodás előrejelző modellt. Ez a prediktív karbantartási dataset különböző gyártógépek adatait tartalmazza, és kiváló alapot nyújt AI megoldások fejlesztésére. Az alábbiakban javaslatot teszek egy mesterséges intelligencia modell fejlesztésére, amely képes előre jelezni a gépek meghibásodását, lehetővé téve a proaktív karbantartást.</p>
+
+        <h2>Prediktív Karbantartási Modell</h2>
+        <p>A dataset felhasználásával fejleszthetünk egy meghibásodás előrejelző modellt. A cél, hogy az algoritmus a log-adatok alapján felismerje a potenciális meghibásodásokat, mielőtt azok bekövetkeznének. Ez növeli a gyártógépek rendelkezésre állását, csökkenti az állásidőt és az esetleges költségeket.</p>
+
+        <h2>Modelljavaslatok</h2>
+        <ul>
+            <li><strong>Idősoros Elemzés:</strong> Az adatok idősoros jellege miatt használhatunk RNN (Recurrent Neural Network) vagy LSTM (Long Short-Term Memory) neurális hálózatokat.</li>
+            <li><strong>Anomália Detektálás:</strong> Ha nem áll rendelkezésre elegendő meghibásodási adat, használhatunk anomália detektáló algoritmusokat (pl. Autoencoders) az ismeretlen meghibásodások észlelésére.</li>
+        </ul>
+
+        <p>Az Autoencoder modell teszteléséhez a Google Colab vagy a Hugging Face Notebookok kiváló választások, mivel mindkettő támogatja a Python alapú gépi tanulási kódokat, és könnyen hozzáférhetők online. Az alábbiakban bemutatom, hogyan próbálhatod ki az Autoencoders modellt ezen a prediktív karbantartási dataseten.</p>
+
+        <h2>Mit csinál a kód:</h2>
+
+        <!-- Code blocks -->
+        <div class="code-block">
+            # Szükséges Könyvtárak Telepítése és Importálása
+            dataset = load_dataset("EddyGiusepe/Modified_dataset_for_predictive_maintenance")
+            data = dataset['train'].to_pandas()  # Konvertálás Pandas DataFrame-be
+        </div>
+
+        <div class="code-block">
+            # Ellenőrizd az adatok szerkezetét
+            print(data.head())
+        </div>
+
+        <div class="code-block">
+            # Normalizáld az adatokat
+            features = data.drop(columns=['label'])  # Feltételezve, hogy a 'label' oszlop a meghibásodási jelző
+            scaler = StandardScaler()
+            features = scaler.fit_transform(features)
+        </div>
+
+        <div class="code-block">
+            # Adatok Felosztása Tanító és Teszt Halmazra
+            X_train, X_test = train_test_split(features, test_size=0.2, random_state=42)
+            X_train = torch.tensor(X_train, dtype=torch.float32)
+            X_test = torch.tensor(X_test, dtype=torch.float32)
+        </div>
+
+        <div class="code-block">
+            # Autoencoder Modell Definiálása
+            class Autoencoder(nn.Module):
+                def __init__(self, input_dim):
+                    super(Autoencoder, self).__init__()
+                    self.encoder = nn.Sequential(
+                        nn.Linear(input_dim, 64),
+                        nn.ReLU(),
+                        nn.Linear(64, 32),
+                        nn.ReLU(),
+                        nn.Linear(32, 16)
+                    )
+                    self.decoder = nn.Sequential(
+                        nn.Linear(16, 32),
+                        nn.ReLU(),
+                        nn.Linear(32, 64),
+                        nn.ReLU(),
+                        nn.Linear(64, input_dim)
+                    )
+
+                def forward(self, x):
+                    encoded = self.encoder(x)
+                    decoded = self.decoder(encoded)
+                    return decoded
+        </div>
+
+        <div class="code-block">
+            # Modell Tanítása
+            criterion = nn.MSELoss()
+            optimizer = optim.Adam(model.parameters(), lr=0.001)
+            num_epochs = 50
+            for epoch in range(num_epochs):
+                optimizer.zero_grad()
+                outputs = model(X_train)
+                loss = criterion(outputs, X_train)
+                loss.backward()
+                optimizer.step()
+                if (epoch+1) % 10 == 0:
+                    print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
+        </div>
+
+        <div class="code-block">
+            # Modell Értékelése és Anomáliák Azonosítása
+            with torch.no_grad():
+                reconstructions = model(X_test)
+                test_loss = criterion(reconstructions, X_test)
+                print(f'Teszt veszteség: {test_loss.item():.4f}')
+            
+            reconstruction_errors = torch.mean((X_test - reconstructions) ** 2, dim=1)
+            threshold = np.percentile(reconstruction_errors.detach().numpy(), 95)  # 95. percentilis
+            anomalies = reconstruction_errors > threshold
+            print(f'Anomáliák száma: {anomalies.sum().item()}')
+        </div>
+
+        <div class="code-block">
+            # Eredmények Vizualizálása
+            plt.hist(reconstruction_errors.detach().numpy(), bins=50)
+            plt.axvline(threshold, color='red', linestyle='--')
+            plt.xlabel('Reconstruction Error')
+            plt.ylabel('Frequency')
+            plt.title('Anomália Azonosítás')
+            plt.show()
+        </div>
+
+        <p>Az oldal alján egy példa található a d3js könyvtár Hierarchical edge bundling megjelenítésére: <a href="https://gist.github.com/mbostock/1044242">link</a></p>
+    </div>
+</body>
+</html>
