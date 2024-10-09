@@ -1,0 +1,6 @@
+[
+  {"name": "root.node1", "imports": ["root.node2", "root.node3"]},
+  {"name": "root.node2", "imports": ["root.node1"]},
+  {"name": "root.node3", "imports": ["root.node4"]},
+  {"name": "root.node4", "imports": []}
+]
