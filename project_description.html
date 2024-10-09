@@ -68,13 +68,49 @@
         <h2>Prediktív Karbantartási Modell</h2>
         <p>A dataset felhasználásával fejleszthetünk egy meghibásodás előrejelző modellt. A cél, hogy az algoritmus a log-adatok alapján felismerje a potenciális meghibásodásokat, mielőtt azok bekövetkeznének. Ez növeli a gyártógépek rendelkezésre állását, csökkenti az állásidőt és az esetleges költségeket.</p>
 
-        <h2>Modelljavaslatok</h2>
+        <h2>Modelljavaslat</h2>
         <ul>
-            <li><strong>Idősoros Elemzés:</strong> Az adatok idősoros jellege miatt használhatunk RNN (Recurrent Neural Network) vagy LSTM (Long Short-Term Memory) neurális hálózatokat.</li>
             <li><strong>Anomália Detektálás:</strong> Ha nem áll rendelkezésre elegendő meghibásodási adat, használhatunk anomália detektáló algoritmusokat (pl. Autoencoders) az ismeretlen meghibásodások észlelésére.</li>
         </ul>
 
         <p>Az Autoencoder modell teszteléséhez a Google Colab vagy a Hugging Face Notebookok kiváló választások, mivel mindkettő támogatja a Python alapú gépi tanulási kódokat, és könnyen hozzáférhetők online. Az alábbiakban bemutatom, hogyan próbálhatod ki az Autoencoders modellt ezen a prediktív karbantartási dataseten.</p>
+        <p>Az Autoencoder eredménye: Teszt veszteség: 0.9827, Anomáliák száma: 75</p>
+        <p>mit jelent ez pontosan? milyen adatokból indultunk ki, mit mutat ez a 75-ös érték?</p>
+        <p>Az üzenet, amely a teszt veszteséget és az anomáliák számát mutatja, az Autoencoder modell eredményeit összegzi. Az Autoencoder célja, hogy az adott adathalmaz alapján azonosítsa azokat az eseteket, amelyek eltérnek a "normál" mintától. Nézzük meg részletesen, mit jelent mindez:
+
+        <h2>Kiinduló Adatok</h2>
+    <p>Az Autoencoder modell betanításához és teszteléséhez a következő adatok álltak rendelkezésre a prediktív karbantartási datasetben:
+
+Adatváltozók: Olyan érzékelők által gyűjtött értékek, mint például:
+Lég- és folyamat hőmérséklet,
+Forgási sebesség,
+Forgatónyomaték,
+Szerszámkopás.
+Célváltozó: A "Failure Type" oszlop, amely megjelöli, ha valamilyen hiba történt a gép működésében.
+A modell betanítása során a szöveges azonosítókat és kategóriákat (mint pl. a "Product ID" és "Type") elhagytuk, és a maradék numerikus adatokat használtuk fel.
+</p>
+<h2>Eredmények Értelmezése</h2>
+<h2>Teszt Veszteség (0.9827):</h2>
+<p>Ez az Autoencoder modell teljesítményének egyik mutatója a teszt adathalmazon. A veszteség azt jelzi, mennyire képes a modell rekonstruálni a bemeneti adatokat.
+A veszteségérték azt mutatja meg, mennyire jól tudja az Autoencoder visszaállítani a bemeneti értékeket a saját, tanult reprezentációja alapján. A kisebb érték jobb rekonstrukciót jelent, tehát a 0.9827 veszteség egy viszonylag nagy hibát jelent.
+</p>
+<h2>Anomáliák Száma (75):</h2>
+<p>
+Ez az érték azt jelzi, hogy az Autoencoder által rekonstruált adatok hibája alapján 75 esetnél az újraépített (rekonstruált) értékek eltértek a normáltól.
+A modell azokat az eseteket, ahol a hiba meghaladta a 95%-os küszöbértéket, anomáliának jelölte meg. Ezek az esetek a "normál" működéstől eltérőek, ami valamilyen szokatlan mintázatra vagy potenciális hibára utalhat.
+Az ilyen típusú modellek használhatók prediktív karbantartás során az anomáliák azonosítására, így figyelmeztethetjük a karbantartási csapatot, hogy előre jelezzük a lehetséges meghibásodásokat vagy nem várt működést.
+Mit Jelent a 75-ös Érték?
+A 75 anomália azt jelenti, hogy a teszt adatok közül 75 olyan volt, amelyek jelentősen eltértek a modell által várttól. Ezek az anomáliák potenciálisan olyan események, amelyek valamilyen hibára vagy szokatlan működésre utalhatnak a gépekben.
+</p>
+<h2>Összefoglalva</h2>
+<p>A teszt veszteség és az anomáliák száma az Autoencoder modell teljesítményét és az adathalmazban található lehetséges rendellenességeket mutatják. A 75-ös anomália érték azt jelzi, hogy a modell ezen eseteket potenciálisan nem normális működésként azonosította. Ezekre érdemes figyelni a prediktív karbantartási stratégiák során, mivel az anomáliák segíthetnek megelőzni a hibákat.
+</p>
+
+
+
+
+
+
 
         <h2>Mit csinál a kód:</h2>
 
